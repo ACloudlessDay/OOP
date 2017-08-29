@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style>	
+			*{
+				padding:0;
+				margin: 0;
+			}	
+			body{
+				background-color: #fff;position: relative;height: 100%;
+			}
+			#can{
+				background-color: #333;
+				display: block;
+				margin:50px auto;
+			}
+			.start{
+				position: absolute;
+				width: 300px;
+				height: 100px;
+				background: #2BB8AA;
+				border-radius: 30px;
+				top: 0;
+			}
+			.start-p{
+				color: #fff;
+				font-size: 50px;
+				text-align: center;line-height: 100px;
+				cursor: pointer;
+			}
+			
+		</style>
+	</head>
+
+	<body>
+
+		<div class="start">
+			<p class="start-p">开始游戏</p>
+		</div>
+
+		
+		<canvas id="can" width="1400" height="600">
+			
+		</canvas>
+		<script src="unit.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			function Bullet(){
+				// 先让子弹出现在左上角
+				this.x = unit.r(30,game.canW);
+				this.y = unit.r(30,100);
+//				this.dx = unit.r(2,5);
+				this.dx = unit.r(1,4) * (Math.random()>0.5 ? 1 : -1);//	随机数大于 0.5 概率在 50%  如果为 大于就位正数 否则为反
+//				this.dy = unit.r(2,5);
+				this.dy = unit.r(1,4) * (Math.random()>0.5 ? 1 : -1);
+				this.r = unit.r(5,20);
+//				this.color = rgb(unit.r(0,255),unit.r(0,255),unit.r(0,255))
+				this.color = "rgb("+ unit.r(0,255)+","+unit.r(0,255)+","+unit.r(0,255)+")";
+
+			};
+			
+			Bullet.prototype = {
+				constructor:Bullet,
+				render : function(){
+//					var can = document.getElementById('can');
+//					var ctx = can.getContext("2d");
+					
+//					game.ctx.clearRect(0,0,500,500);
+					game.ctx.beginPath();//	定义路线
+					game.ctx.arc(this.x,this.y,this.r,0,2*Math.PI)//画圆
+					game.ctx.closePath();// 绘制
+					game.ctx.fillStyle = this.color;
+					game.ctx.fill();
+				},
+				move : function(){
+					if(this.x >game.canW-this.r || this.x < 0+this.r){
+						this.dx = -1*this.dx;
+					}
+					if(this.y >game.canH-this.r || this.y <0+this.r){
+						this.dy = -1*this.dy;
+					}
+					this.x += this.dx;
+					this.y += this.dy;
+
+					this.render();
+				}			
+			}
+			
+			function Plane(){
+				can = document.getElementById('can'),
+				canW = can.offsetWidth,
+				canH = can.offsetHeight,	
+				this.x = canW/2;
+				this.y = canH/2;
+				this.dx=0;
+				this.dy=0;
+				this.img = new Image();
+				this.img.src = "plane.png";
+				this.rotate = 0;//	角度属性
+
+			}
+			
+			Plane.prototype = {
+				constructor:Plane,
+				render : function(){
+
+//					game.ctx.drawImage(this.img,this.x,this.y);
+					game.ctx.save()//由于这个旋转可能会对其它之前画的内容产生影响 ，所以要先保存整个的绘制状态
+					game.ctx.translate(this.x,this.y)//把画布的中心位置移到飞机位置
+					game.ctx.rotate(this.rotate);//	旋转
+					game.ctx.drawImage(this.img,-16,-16);
+					game.ctx.restore();
+				},
+				move : function(){
+					
+					this.x += this.dx;
+					this.y += this.dy;
+					//	为什么加 16 ？   因为飞机在旋转的过程中  已结减掉了  16
+					//	canW  canH    canvas  元素的宽高
+					this.x = Math.max(0+16,this.x);//	在 零 和自身之间 取一个最大值
+					this.x = Math.min(game.canW-16,this.x);//	在 零 和自身之间 取一个最小值
+					this.y = Math.max(0+16,this.y);
+					this.y = Math.min(game.canH-16,this.y);
+
+					
+					
+					if(this.dx > 0  &&  this.dy > 0){//右下
+							this.rotate = Math.PI*3/4
+							console.log('右下')
+						}
+					else if(this.dx > 0  &&  this.dy < 0){//右上
+						this.rotate = Math.PI*1/4
+					}
+					else if(this.dx < 0  &&  this.dy < 0){//左上
+						this.rotate = Math.PI*7/4
+					}
+					else if(this.dx < 0  &&  this.dy > 0){//左下
+						this.rotate = Math.PI*5/4
+					}
+					else if(this.dx > 0 && this.dy==0){ //右
+						this.rotate = Math.PI*1/2
+					}
+					else if(this.dx < 0  &&  this.dy == 0){//左
+						this.rotate = Math.PI*3/2
+					}
+					else if(this.dx ==0   && this.dy > 0){ //下
+						this.rotate = Math.PI
+					}
+					else if(this.dx == 0  &&  this.dy < 0){//上
+						this.rotate = 0
+					}
+					
+					this.render();
+				},
+				
+			}
+			
+			var game = {
+				plane : new Plane(),
+				can:document.getElementById('can'),
+				canW : can.offsetWidth,
+				canH : can.offsetHeight,				
+				ctx:document.getElementById('can').getContext("2d"),
+				bulletNumber:60,
+				frameIndex:0,
+				actor : [],				
+				updateTime : function(){//	时间
+					this.ctx.textAlign = 'center';
+					this.ctx.textBaseline = 'middle';
+					this.ctx.font = '50px 微软雅黑';
+					var t = this.frameIndex * 40 /1000; //由于 frameIndex 每40ms+1
+
+					var t_z = t.toFixed(2);//	取两位小数
+					this.ctx.fillText('少侠你已坚持了：'+t_z+"秒",game.canW/2,game.canH*0.1);//	页面上的显示坚持时间
+					
+				},
+				
+				addEvent:function(){
+					var that = this;
+					document.body.addEventListener('keydown',function(e){//	监听键盘按下事件
+						console.log(e.keyCode);
+//					Up:   e.keyCode= 38
+//					Down: e.keyCode= 40
+//					Left:  e.keyCode= 37
+//					Right:  e.keyCode= 39
+
+						if(e.keyCode == 38){//	每按下一次   up Y轴坐标就  -5
+							
+							that.plane.dy = -5;
+//							console.log(that.plane,that.plane.dy);
+						}
+						else if(e.keyCode == 40){
+							that.plane.dy = 5;							
+						}
+						else if(e.keyCode == 37){
+							that.plane.dx = -5;
+						}
+						else if(e.keyCode == 39){
+							that.plane.dx = 5;
+						}
+					});
+					document.body.addEventListener('keyup',function(e){//	监听键盘抬起事件
+//						console.log(e.keyCode);
+//					Up:   e.keyCode= 38
+//					Down: e.keyCode= 40
+//					Left:  e.keyCode= 37
+//					Right:  e.keyCode= 39
+
+						if(e.keyCode == 38){
+							
+							that.plane.dy = 0;
+//							console.log(that.plane,that.plane.dy);
+						}
+						else if(e.keyCode == 40){
+							that.plane.dy = 0;							
+						}
+						else if(e.keyCode == 37){
+							that.plane.dx = 0;
+						}
+						else if(e.keyCode == 39){
+							that.plane.dx = 0;
+						}
+					});
+				},
+				isOver:function(){//	碰撞检测
+					var flag = false;
+					var px = this.plane.x;
+					var py = this.plane.y;
+					
+					for(var i=0;i<this.actor.length;i++){
+						var t = this.actor[i];
+						if( t.__proto__.constructor === Bullet ){
+							var x = t.x;
+							var y = t.y;
+							if( Math.pow(x-px,2) + Math.pow(y-py,2) < 20*20 ){
+								flag = true;
+								break;
+							}
+						}
+					}
+					return flag;//	返回   flag  的值
+				},
+				start : function(){
+					var that =this;
+
+					for(var i=0;i<this.bulletNumber;i++){//	循环自设的 圆球数 
+						this.actor.push( new Bullet() )	//	生成 相应小球数的 小球
+					}		
+//					this.actor.push( new Plane() );	因为飞机加到数组里面会不好找   所以我们先在game里 创建一架飞机
+					
+					this.addEvent();//	调用 键盘按下事件
+					
+					this.actor.push( this.plane );//	把飞机加到演员列表里
+
+				
+					this.timer = setInterval(function(){
+						that.frameIndex++;//	帧数
+						that.ctx.clearRect(0,0,game.canW,game.canH);//	情空矩形
+						that.updateTime();
+						if( that.isOver() == true ){//	如果碰撞上了
+							console.log('over');
+							clearInterval(that.timer);//	清除定时器
+							document.body.addEventListener('keydown',function(e){//	监听键盘按下事件
+								if(e.keyCode == 49){
+//									game.start();
+									history.go(0);
+//									window.onload=function(){
+//										var removeNode = document.querySelector('.start');
+//										console.log(removeNode);
+//										removeNode.parentNode.removeChild(removeNode);	
+//									}
+								}															
+							});
+							
+						}
+						for(var i=0;i<that.actor.length;i++){
+							that.actor[i].move();//	演员列表里面所有的演员调用移动方法
+//							console.log(that.actor[i]);
+							
+						}
+					},1000/25);
+				},
+			}
+			
+			var start = document.querySelector('.start');
+			var w = start.offsetWidth/2;
+			var h = start.offsetHeight/2;
+//			console.log(w,h);
+			start.style.top = -h+(document.body.clientHeight/2)+'px';
+			start.style.left = -w+(document.body.clientWidth/2)+'px';
+			
+//			console.log(document.body.clientHeight/2);
+//			console.log(start)
+			start.addEventListener('click',function(){
+				game.start();
+				start.style.display = 'none';
+
+				
+			});
+			
+//			console.log(game.actor)
+//			var b1 = new Bullet();
+//			game.start();
+			
+//			setInterval(function(){
+//				b1.move();
+//			},1000/25);
+		</script>
+	</body>
+</html>

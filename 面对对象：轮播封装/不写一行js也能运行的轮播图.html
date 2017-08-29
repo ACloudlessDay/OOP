@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="slider.css"/>
+		<style>
+			.slider1{margin: 20px;float: left;}
+			.slider1,.slider1 li {
+				width:300px;
+				height: 420px;
+			}
+			
+			.slider2{margin: 20px; float: right;}
+			.slider2,.slider2 li {
+				width:400px;
+				height: 300px;
+			}
+		</style>
+	</head>
+	<body>
+		<h2>轮播图</h2>
+			<div class="slider1 slider" data-speed="3000" data-isautoplay="true" data-startIndex="1" data-istxt="true">
+			<!--<span class="btn btnleft"></span>
+			<span class="btn btnright"></span>-->
+			<div class="slidercontent">
+				<ul>
+					<li>
+						<a href=" "> 
+							<img src="images/1.The Shawshank Redemption.jpg" alt="肖克恩的救赎" />
+						</a>
+					</li>
+					<li>
+						<a href=" "> 
+							<img src="images/2.Forrest Gump.jpg" alt="阿甘正传" />
+						</a>
+					</li>
+					<li>
+						<a href=" "> 
+							<img src="images/3.The Pursuit of Happyness.jpg" alt="当幸福来敲门" />
+						</a>
+					</li>
+						<li>
+						<a href=" "> 
+							<img src="images/4.这个杀手不太冷.jpg" alt="这个杀手不太冷" />
+						</a>
+					</li>
+					<li>
+						<a href=" "> 
+							<img src="images/5.WALL·E.jpg" alt="机器人总动员" />
+						</a>
+					</li>
+					<li>
+						<a href=" "> 
+							<img src="images/6.Hachiko.jpg" alt="忠犬八公" />
+						</a>
+					</li>
+				</ul>
+			</div>
+			<!--<div class="txt">
+				<p>内容介绍</p>
+			</div>-->
+			<!--<div class="indirector">
+				<span class='current'></span>
+				<span></span>
+				<span></span>
+				<span></span>
+				<span></span>
+				<span></span>
+			</div>-->
+		</div>
+		
+		<div class="slider slider2" data-speed="2000" data-isautoplay="true" data-startIndex="5" data-istxt="false">
+			<div class="slidercontent">
+				<ul>
+					<li>
+						<a href=" "> 
+							<img src="images/html.jpg" alt="html是结构" />
+						</a>
+					</li>
+					<li>
+						<a href=" "> 
+							<img src="images/css.jpg" alt="css是样式" />
+						</a>
+					</li>
+					<li>
+						<a href=" "> 
+							<img src="images/js.jpg" alt="js是动作" />
+						</a>
+					</li>
+					<li>
+						<a href=" "> 
+							<img src="images/jquery.jpg" alt="这是一个库" />
+						</a>
+					</li>
+					<li>
+						<a href=" "> 
+							<img src="images/nodejs.jpg" alt="服务器端的js" />
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<script src="slider-auto.js" type="text/javascript" charset="utf-8"></script>
+	</body>
+</html>

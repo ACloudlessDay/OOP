@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style>
+			.circle1{
+				width:200px;
+				height:200px;
+				border:1px solid #000;
+			}
+			.circle2{
+				width:200px;
+				height:200px;
+				border:1px solid #000;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>canvas画圆</h1>
+		<div class="circle circle1">
+			<!--<canvas id="can" width="200" height="200"></canvas>-->
+		</div>
+		<!--<canvas id="can" width="200" height="200"></canvas>-->
+		
+		<div class="circle2" dete-number="50">
+			
+		</div>
+		<script src="Circle.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/unit.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			
+			var c1 = new Circle(".circle1",{
+					maxX:88,			    //默认的百分比的进度 88%
+					frontColor:"#ff0000",   // 前景色 默认是红色 
+					backgroundColor:"#999", // 背景色 默认是红色
+					fontsize:20,			//默认字的大小
+					startDirection:"top",  //从3点方向开始，顺时针
+					linewidth:10,			//线条的粗细
+				});
+			
+			
+			var c2 = new Circle(".circle2",{
+					maxX:48,			    //默认的百分比的进度 88%
+					frontColor:"#ff0000",   // 前景色 默认是红色 
+					backgroundColor:"#999", // 背景色 默认是红色
+					fontsize:20,			//默认字的大小
+					startDirection:"top",  //从3点方向开始，顺时针
+					linewidth:10,			//线条的粗细
+				});
+		</script>
+	</body>
+</html>
